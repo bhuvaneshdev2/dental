@@ -535,101 +535,188 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Stateful booking variables
     let chatState = 'idle';
-    let bookingForm = {
-        name: '',
-        email: '',
-        phone: '',
-        datetime: ''
+    let userName = ''; // Conversational Memory
+    let bookingForm = { name: '', email: '', phone: '', datetime: '' };
+
+    // Massive AI Intent Dictionary
+    const aiIntents = [
+        {
+            name: "emergency",
+            keywords: ["emergency", "pain", "hurt", "bleeding", "knocked", "swollen", "toothache", "broken", "severe", "blood", "accident"],
+            responses: [
+                "I'm so sorry you're in pain! For dental emergencies, please call us immediately at **+91 8870341570**. If it's outside our 9 AM - 6 PM hours, our voicemail will connect you to the on-call emergency dentist.",
+                "Dental pain is awful, and we want to help right away. Please call our emergency line at **+91 8870341570**. We reserve slots every day for urgent care like broken teeth or severe toothaches."
+            ]
+        },
+        {
+            name: "booking",
+            keywords: ["book", "appointment", "schedule", "reserve", "see a doctor", "visit", "consultation"],
+            responses: [
+                "I can definitely help you set up an appointment! To get started, what is your **full name**? (Type 'cancel' anytime to stop)"
+            ]
+        },
+        {
+            name: "pricing_insurance",
+            keywords: ["cost", "price", "insurance", "delta", "cigna", "aetna", "metlife", "blue", "payment", "financing", "expensive", "cheap", "carecredit", "membership", "plan"],
+            responses: [
+                "We believe premium dental care should be affordable! We accept most major PPOs (Delta Dental, Aetna, Cigna, MetLife). No insurance? Join our **$29/mo clinic membership** for free cleanings and 20% off all treatments. We also offer 0% interest financing through CareCredit.",
+                "Financing is easy with us! We accept all major PPO insurance plans. If you are uninsured, our $29/month Rakshu Dental Plan covers your yearly cleanings and gives a 20% discount on surgeries and implants. We also have 0% monthly payment options!"
+            ]
+        },
+        {
+            name: "services_general",
+            keywords: ["services", "treatments", "what do you do", "offerings", "options", "dental care"],
+            responses: [
+                "At Rakshu Dental, we offer a full suite of services: \n- **Fillings & Cleanings**\n- **Teeth Whitening**\n- **Oral Surgery & Extractions**\n- **Premium Dental Implants**\nWhich service would you like to know more about?",
+                "We are a full-service clinic! Whether you need a simple general cleaning, cosmetic teeth whitening, root canals, or advanced dental implants, our specialists have you covered. Is there a specific treatment you're looking for?"
+            ]
+        },
+        {
+            name: "whitening",
+            keywords: ["whitening", "bleach", "stains", "yellow", "bright", "white teeth", "smile makeover"],
+            responses: [
+                "Our professional **Teeth Whitening** treatment is fantastic! We use safe, high-grade formulas that can lift years of coffee or tea stains, brightening your smile by up to 8 shades in just a single 1-hour session.",
+                "If you want a brighter smile, our in-office whitening is the best choice. It's fast, completely safe for your enamel, and delivers dramatic results instantly compared to over-the-counter strips."
+            ]
+        },
+        {
+            name: "implants",
+            keywords: ["implant", "missing", "bridge", "denture", "replacement", "screw"],
+            responses: [
+                "Missing a tooth? **Dental Implants** are the gold standard for replacement. They function, feel, and look exactly like natural teeth. Dr. Mark Peterson, our implant specialist, uses painless, precise techniques to restore your smile permanently.",
+                "Dental Implants act as an artificial root and crown, giving you a permanent, rock-solid tooth replacement. They prevent bone loss and let you eat all your favorite foods without worry!"
+            ]
+        },
+        {
+            name: "phobia",
+            keywords: ["phobia", "fear", "scared", "anxious", "anxiety", "nervous", "hurt", "painful", "sedation", "sleep"],
+            responses: [
+                "It's completely normal to feel anxious about the dentist! Our clinic specializes in **Dental Phobia Comfort**. We offer conscious sedation (laughing gas or oral sedation) and a Comfort Menu with noise-canceling headphones, weighted blankets, and Netflix.",
+                "Please don't worry! We cater specifically to nervous patients. We use ultra-gentle techniques, explain everything slowly, and provide sedation options to ensure your visit is 100% stress-free and painless."
+            ]
+        },
+        {
+            name: "doctors",
+            keywords: ["doctor", "dentist", "specialist", "surgeon", "who", "team", "staff", "jenkins", "rahman", "peterson", "thompson"],
+            responses: [
+                "We have a brilliant team of specialists under one roof:\n- **Dr. Sarah Jenkins**: Pediatrics & Ortho\n- **Dr. Sarah Rahman**: Cosmetic Lead\n- **Dr. Mark Peterson**: Oral Surgeon (Implants)\n- **Dr. M. Thompson**: Periodontist (Gum Health)\nThey are all exceptionally gentle and skilled!",
+                "Our doctors are top-tier specialists! Dr. Rahman handles stunning cosmetic makeovers, Dr. Peterson performs flawless implant surgeries, Dr. Jenkins is amazing with kids, and Dr. Thompson specializes in gum health."
+            ]
+        },
+        {
+            name: "kids",
+            keywords: ["child", "kid", "pediatric", "baby", "children", "toddler"],
+            responses: [
+                "We love kids! **Dr. Sarah Jenkins**, our pediatric specialist, creates a fun, fear-free environment for children. We recommend bringing your child in for their first visit by age 1 or when their first tooth appears.",
+                "Absolutely, we provide exceptional pediatric care! We make dental visits fun for children to build good lifelong habits. Dr. Jenkins is wonderful at keeping kids calm and happy."
+            ]
+        },
+        {
+            name: "location_hours",
+            keywords: ["location", "address", "where", "city", "california", "hours", "open", "time", "weekend", "close"],
+            responses: [
+                "We are located in a state-of-the-art clinic in California! We are open **Monday to Friday, from 9:00 AM to 6:00 PM**. We have ample free parking right out front.",
+                "You'll find our beautiful clinic in California. Our hours are 9 AM to 6 PM, Monday through Friday. We'd love to see you!"
+            ]
+        },
+        {
+            name: "discount",
+            keywords: ["discount", "offer", "promo", "deal", "percent", "off", "free", "zero", "consultation"],
+            responses: [
+                "Great news! We currently offer a **Free Doctor Consultation** which includes a high-tech health assessment. Plus, if you join our membership plan today, you get **20% off** major procedures!",
+                "We have an exclusive offer right now: **25% off your first treatment** when you register online! Also, initial consultations are completely free of charge."
+            ]
+        },
+        {
+            name: "greetings",
+            keywords: ["hi", "hello", "hey", "greet", "good morning", "good afternoon", "howdy", "how are you", "what's up", "morning"],
+            responses: [
+                "Hello there! I'm the Rakshu Dental AI Assistant. I can help you book an appointment, answer questions about our services, or explain our pricing. How can I help you today?",
+                "Hi! I'm here to answer any questions you have about our dental clinic, treatments, or doctors. What's on your mind?",
+                "Hello! How are you doing today? I can help you learn about our painless treatments, check our hours, or schedule a visit!"
+            ]
+        },
+        {
+            name: "thanks",
+            keywords: ["thank", "thanks", "helpful", "appreciate", "bye", "goodbye", "see you"],
+            responses: [
+                "You're very welcome! If you need anything else, I'm always here. Have a fantastic day and keep smiling! 😁",
+                "Happy to help! Reach out anytime if you have more questions. Take care!",
+                "You're welcome! Have a wonderful day!"
+            ]
+        },
+        {
+            name: "ai_persona",
+            keywords: ["who are you", "are you a robot", "are you ai", "are you human", "what are you", "bot", "name"],
+            responses: [
+                "I'm the Rakshu Dental AI Assistant! I'm not a human, but I've been trained on everything there is to know about our clinic, doctors, and treatments. I'm here 24/7 to help you out!",
+                "I am a virtual AI assistant designed specifically for Rakshu Dental. While I don't have teeth of my own, I know all about how to take care of yours! How can I help?"
+            ]
+        }
+    ];
+
+    const getRandomResponse = (responses) => responses[Math.floor(Math.random() * responses.length)];
+
+    // NLP-Lite Intent Scoring Engine
+    const scoreIntent = (query) => {
+        const cleanQuery = query.toLowerCase().trim();
+        
+        if (cleanQuery === 'cancel' || cleanQuery === 'exit' || cleanQuery === 'stop') {
+            return { intent: 'cancel', score: 100 };
+        }
+
+        let bestIntent = null;
+        let maxScore = 0;
+        const words = cleanQuery.replace(/[.,!?]/g, '').split(/\s+/);
+
+        aiIntents.forEach(intentObj => {
+            let score = 0;
+            intentObj.keywords.forEach(keyword => {
+                if (cleanQuery.includes(keyword.toLowerCase())) score += 5; 
+            });
+            words.forEach(word => {
+                if (intentObj.keywords.some(kw => kw.includes(word) && word.length > 3)) score += 1;
+            });
+
+            if (score > maxScore) {
+                maxScore = score;
+                bestIntent = intentObj.name;
+            }
+        });
+
+        if (maxScore >= 5) {
+            return { intent: bestIntent, score: maxScore };
+        } else {
+            return { intent: 'unknown', score: maxScore };
+        }
     };
 
-    // Local Knowledge base
-    const knowledgeBase = {
-        services: `At Rakshu Dental, we offer a wide range of dental care services, including:
-1. **Dental fillings** - Natural-looking restorations for decayed/damaged teeth.
-2. **Teeth whitening** - Professional stain removal for a bright smile.
-3. **Oral Surgery** - Safe and gentle extractions & procedures.
-4. **Dental Implants** - Durable, natural tooth replacements.
-
-Would you like more details on any of these?`,
-        
-        doctors: `Our clinical team consists of highly-qualified specialists:
-- **Dr. Sarah Jenkins**: Pediatric Dentist & Orthodontist.
-- **Dr. Sarah Rahman**: Lead Dentist & Cosmetic Specialist.
-- **Dr. Mark Peterson**: Oral Surgeon & Implant Specialist.
-- **Dr. M. Thompson**: Senior Dentist & Periodontist.
-
-They are all dedicated to providing compassionate, gentle care!`,
-
-        booking: `Booking an appointment at Rakshu Dental is easy! You can:
-1. **Call us** directly at **+91 8870341570**.
-2. Click the **"Book an appointment"** button anywhere on our website to launch our online booking tool.
-3. Message us directly on **WhatsApp** using the green button in the bottom-left corner!
-
-Would you like to book a session now?`,
-
-        freeConsult: `Yes! We offer completely **Free Doctor Consultations** under our Zero Cost Care program. 
-This includes comprehensive health assessments with:
-- Next-generation MRI scan reviews
-- Cardiovascular & neurocognitive assessments
-- Early cancer screening insights
-- Genetic testing analysis
-
-You can schedule one by calling **+91 8870341570**.`,
-
-        discount: `Register with us today to claim an exclusive **25% discount** on your first treatment! Just enter your email in the subscription form at the bottom of the page or ask our reception desk when you arrive.`,
-        
-        about: `Our team of skilled and experienced dental professionals strives to create a comfortable and welcoming environment for each and every patient. We offer a wide range of services and simple ways to save on dental care.`,
-        
-        location: `We are located in California! Our team provides modern, comfortable dental care in a spotless, welcoming environment.`,
-
-        contacts: `You can reach Rakshu Dental at:
-- **Phone**: +91 8870341570
-- **WhatsApp**: Click the green button in the bottom-left corner!
-- **Hours**: Monday to Friday, 9:00 AM - 6:00 PM
-- **Email**: bhuvaneshkarnan@gmail.com`,
-
-        phobia: `At Rakshu Dental, we offer a dedicated **Dental Phobia Comfort Care** system to ensure an anxiety-free visit:
-1. **Conscious Sedation** - Custom laughing gas or oral sedation options.
-2. **Comfort Menu** - Noise-canceling headphones, weighted blankets, herbal teas, and Netflix streams.
-3. **Gentle Explanation** - Our clinic works slowly and explains everything at your own pace.`,
-        
-        faq: `We have listed our top Frequently Asked Questions on the page, covering:
-- First-visit expectations
-- Accepted PPO insurance claims
-- Pain management & comfort options
-- Emergency dental treatments
-- Financing & 0% interest payment plans`,
-
-        financePlan: `For payments and financing at Rakshu Dental:
-1. **PPO Insurance**: Accepted from Delta Dental, Aetna, Cigna, MetLife, Blue Shield, etc.
-2. **Zero Insurance Plan**: Join our **$29/mo clinic membership plan** for 2 cleanings, x-rays, exams, and **20% off** treatments.
-3. **0% Interest Financing**: Simple monthly plans through CareCredit.`
-    };
-
-    // Smart Match Logic
+    // Main Bot Response Generator
     const getBotResponse = (query) => {
         const cleanQuery = query.toLowerCase().trim();
+        const analysis = scoreIntent(query);
 
-        // Global Cancel Command
-        if (cleanQuery === 'cancel' || cleanQuery === 'exit' || cleanQuery === 'stop') {
+        if (analysis.intent === 'cancel') {
             if (chatState !== 'idle') {
                 chatState = 'idle';
                 bookingForm = { name: '', email: '', phone: '', datetime: '' };
-                return `No problem! I have cancelled the booking process. What else can I help you with?`;
+                return userName ? `No problem, ${userName}! I've cancelled the booking. What else can I do for you?` : `No problem! I have cancelled the booking process. What else can I help you with?`;
             }
+            return `I'm here if you need anything else!`;
         }
 
-        // Stateful Booking Flow
         if (chatState === 'awaiting_name') {
-            bookingForm.name = query; // keep original case
+            bookingForm.name = query; 
+            userName = query.split(' ')[0];
+            if (userName.length > 0) userName = userName.charAt(0).toUpperCase() + userName.slice(1);
             chatState = 'awaiting_email';
-            return `Nice to meet you, **${bookingForm.name}**! What is your email address so we can send confirmation details?`;
+            return `Nice to meet you, **${userName}**! What is your email address so we can send confirmation details?`;
         }
 
         if (chatState === 'awaiting_email') {
             bookingForm.email = query;
             chatState = 'awaiting_phone';
-            return `Got it. What is the best phone number to reach you?`;
+            return `Got it. What is the best phone number to reach you, ${userName}?`;
         }
 
         if (chatState === 'awaiting_phone') {
@@ -642,141 +729,46 @@ You can schedule one by calling **+91 8870341570**.`,
             bookingForm.datetime = query;
             chatState = 'idle';
             
-            // Log details to console (mock save)
             console.log('--- Rakshu Dental Appointment Form ---', bookingForm);
             
-            // Scroll to appointment section
             setTimeout(() => {
                 const apptSection = document.getElementById('appointment');
-                if (apptSection) {
-                    apptSection.scrollIntoView({ behavior: 'smooth' });
-                }
-            }, 1800);
+                if (apptSection) apptSection.scrollIntoView({ behavior: 'smooth' });
+            }, 2500);
 
-            const confirmationMsg = `Thank you! I have registered your appointment request:
-- **Name**: ${bookingForm.name}
-- **Email**: ${bookingForm.email}
-- **Phone**: ${bookingForm.phone}
-- **Preferred Time**: ${bookingForm.datetime}
-
-Our team will contact you shortly to confirm. I am also scrolling you down to our contact form for your reference!`;
-            
-            // Clear form
+            const confirmationMsg = `Thank you, ${userName}! I have registered your appointment request:\n- **Name**: ${bookingForm.name}\n- **Email**: ${bookingForm.email}\n- **Phone**: ${bookingForm.phone}\n- **Preferred Time**: ${bookingForm.datetime}\n\nOur team will contact you shortly to confirm. I am also scrolling you down to our contact form for your reference!`;
             bookingForm = { name: '', email: '', phone: '', datetime: '' };
             return confirmationMsg;
         }
 
-        // Idle state: normal keyword matching & commands
-        
-        // Chit-chat greetings
-        if (cleanQuery === 'hi' || cleanQuery === 'hello' || cleanQuery === 'hey' || cleanQuery === 'greet' || cleanQuery.startsWith('hi ') || cleanQuery.startsWith('hello ')) {
-            return `Hello! How can I help you today? You can ask me about our services, meet the doctors, or book an appointment!`;
-        }
-        
-        // Chit-chat "how are you"
-        if (cleanQuery.includes('how are you') || cleanQuery.includes('how\'re you') || cleanQuery.includes('how do you do') || cleanQuery.includes('how are u')) {
-            return `I'm doing great, thank you for asking! I'm here and ready to help you with bookings, specialist questions, or details about Rakshu Dental. How are you doing today?`;
-        }
-
-        // Scrolling commands
-        if (cleanQuery.includes('take me to') || cleanQuery.includes('scroll to') || cleanQuery.includes('go to appointment') || cleanQuery.includes('appointment page') || cleanQuery.includes('booking page')) {
+        if (cleanQuery.includes('take me to') || cleanQuery.includes('scroll to') || cleanQuery.includes('go to appointment')) {
             setTimeout(() => {
                 const apptSection = document.getElementById('appointment');
-                if (apptSection) {
-                    apptSection.scrollIntoView({ behavior: 'smooth' });
-                }
+                if (apptSection) apptSection.scrollIntoView({ behavior: 'smooth' });
             }, 1000);
-            return `Sure thing! Scrolling you down to our appointment booking section now...`;
+            return userName ? `Sure thing, ${userName}! Scrolling you down now...` : `Sure thing! Scrolling you down to our appointment section now...`;
         }
 
-        // Triggering the Booking Flow
-        if (cleanQuery.includes('book') || cleanQuery.includes('appointment') || cleanQuery.includes('schedule') || cleanQuery.includes('reserve')) {
+        if (analysis.intent === 'booking') {
             chatState = 'awaiting_name';
-            return `I can help you book an appointment right here! Let's get started. 
-
-What is your **full name**? (Type 'cancel' at any point to stop)`;
+            return getRandomResponse(aiIntents.find(i => i.name === 'booking').responses);
         }
 
-        // Check for specific services
-        if (cleanQuery.includes('filling')) {
-            return `Our **Dental Fillings** are designed to restore decayed or damaged teeth. We use composite materials that match your natural tooth color perfectly, protecting your tooth structure without looking metallic.`;
-        }
-        if (cleanQuery.includes('whitening') || cleanQuery.includes('bleach')) {
-            return `Our **Teeth Whitening** treatment uses safe, professional-grade formulas to lift stubborn stains and brighten your smile by several shades in just one session!`;
-        }
-        if (cleanQuery.includes('implant') || cleanQuery.includes('bridge') || cleanQuery.includes('replace tooth')) {
-            return `Our **Dental Implants** are a permanent, premium solution for missing teeth. They look, feel, and function exactly like natural teeth, restoring your smile and confidence.`;
-        }
-        if (cleanQuery.includes('surgery') || cleanQuery.includes('extraction') || cleanQuery.includes('wisdom')) {
-            return `Our **Oral Surgery** team provides gentle, safe, and precise care for tooth extractions (including wisdom teeth) and complex dental procedures with minimal discomfort.`;
+        if (analysis.intent !== 'unknown') {
+            const intentObj = aiIntents.find(i => i.name === analysis.intent);
+            let response = getRandomResponse(intentObj.responses);
+            if (userName && Math.random() > 0.6) {
+                response = `${userName}, ` + response.charAt(0).toLowerCase() + response.slice(1);
+            }
+            return response;
         }
 
-        // Check for specific doctors
-        if (cleanQuery.includes('jenkins') || cleanQuery.includes('children') || cleanQuery.includes('pediatric') || cleanQuery.includes('kids')) {
-            return `**Dr. Sarah Jenkins** is our pediatric dentist & orthodontist. She is fantastic with kids and specializes in children's dental care and teeth alignment (braces/aligners).`;
-        }
-        if (cleanQuery.includes('rahman') || cleanQuery.includes('sarah rahman') || cleanQuery.includes('cosmetic')) {
-            return `**Dr. Sarah Rahman** is our Lead Dentist & Cosmetic Specialist. She has over 12 years of experience creating stunning smile transformations using veneers, crowns, and whitening.`;
-        }
-        if (cleanQuery.includes('peterson') || cleanQuery.includes('mark')) {
-            return `**Dr. Mark Peterson** is our Specialist Oral Surgeon & Implantologist, offering top-tier, painless implant procedures.`;
-        }
-        if (cleanQuery.includes('thompson') || cleanQuery.includes('periodontist') || cleanQuery.includes('gum')) {
-            return `**Dr. M. Thompson** is our Senior Dentist & Periodontist, specializing in gum health, gum disease treatment, and complex restorative dentistry.`;
-        }
-        
-        // General category matching
-        if (cleanQuery.includes('phobia') || cleanQuery.includes('anxious') || cleanQuery.includes('afraid') || cleanQuery.includes('fear') || cleanQuery.includes('scared') || cleanQuery.includes('pain') || cleanQuery.includes('hurt') || cleanQuery.includes('anxiety')) {
-            return knowledgeBase.phobia;
-        }
-        if (cleanQuery.includes('faq') || cleanQuery.includes('question') || cleanQuery.includes('common query') || cleanQuery.includes('ask')) {
-            return knowledgeBase.faq;
-        }
-        if (cleanQuery.includes('insurance') || cleanQuery.includes('billing') || cleanQuery.includes('finance') || cleanQuery.includes('payment') || cleanQuery.includes('membership') || cleanQuery.includes('accept') || cleanQuery.includes('cost') || cleanQuery.includes('price')) {
-            return knowledgeBase.financePlan;
-        }
-        if (cleanQuery.includes('service') || cleanQuery.includes('treatment') || cleanQuery.includes('do you do') || cleanQuery.includes('offer')) {
-            return knowledgeBase.services;
-        }
-        if (cleanQuery.includes('doctor') || cleanQuery.includes('dentist') || cleanQuery.includes('staff') || cleanQuery.includes('team') || cleanQuery.includes('specialist')) {
-            return knowledgeBase.doctors;
-        }
-        if (cleanQuery.includes('consult') || cleanQuery.includes('free') || cleanQuery.includes('zero cost')) {
-            return knowledgeBase.freeConsult;
-        }
-        if (cleanQuery.includes('discount') || cleanQuery.includes('offer') || cleanQuery.includes('promo') || cleanQuery.includes('deal') || cleanQuery.includes('percent') || cleanQuery.includes('off')) {
-            return knowledgeBase.discount;
-        }
-        if (cleanQuery.includes('about') || cleanQuery.includes('who are') || cleanQuery.includes('kristin') || cleanQuery.includes('watson')) {
-            return knowledgeBase.about;
-        }
-        if (cleanQuery.includes('location') || cleanQuery.includes('address') || cleanQuery.includes('where') || cleanQuery.includes('map') || cleanQuery.includes('city')) {
-            return knowledgeBase.location;
-        }
-        if (cleanQuery.includes('phone') || cleanQuery.includes('contact') || cleanQuery.includes('email') || cleanQuery.includes('number') || cleanQuery.includes('hour') || cleanQuery.includes('time') || cleanQuery.includes('open')) {
-            return knowledgeBase.contacts;
-        }
-        if (cleanQuery.includes('review') || cleanQuery.includes('testimonial') || cleanQuery.includes('rating') || cleanQuery.includes('marie') || cleanQuery.includes('kramer')) {
-            return `Patients rate Rakshu Dental at **4.9/5 stars**! 
-Our patient Marie Kramer says: *"I was initially nervous... but the team made me feel completely at ease. My filling was quick, painless, and looks perfectly natural."*`;
-        }
-
-        // Polite responses
-        if (cleanQuery.includes('thank') || cleanQuery.includes('thanks') || cleanQuery.includes('helpful') || cleanQuery.includes('bye')) {
-            return `You're very welcome! If you need anything else, feel free to ask. Have a wonderful day!`;
-        }
-
-        // Fallback response
-        return `I'm sorry, I didn't quite catch that. Could you try rephrasing? 
-
-You can ask me questions about:
-- **Services** (fillings, whitening, implants, surgery)
-- **Specialist Doctors** (Dr. Jenkins, Dr. Rahman, etc.)
-- **Dental Phobia Comfort** (sedation, comfort menu)
-- **Insurance & Payments** ($29 plan, 0% financing)
-- **Booking Appointments** or our phone number
-- **Free Doctor Consultations**
-- **Discounts** (25% off offer)`;
+        const fallbacks = [
+            `I'm sorry, I didn't quite understand that. I'm an AI assistant trained to help with booking appointments, explaining our treatments (like implants or whitening), and answering questions about insurance. Could you rephrase?`,
+            `Hmm, I might not have the answer to that specific question. However, I can help you schedule a visit, tell you about our doctors, or explain our fear-free sedation options! What would you like to know?`,
+            `I didn't quite catch that. Would you like me to help you book an appointment, or do you have a question about our pricing and location?`
+        ];
+        return userName ? `I'm sorry ${userName}, ` + fallbacks[0].substring(11) : getRandomResponse(fallbacks);
     };
 
     // Render message bubble
@@ -834,11 +826,18 @@ You can ask me questions about:
     // Handle bot response delay
     const handleBotReply = (queryText) => {
         showTypingIndicator();
+        
+        // Generate the reply instantly in background
+        const reply = getBotResponse(queryText);
+        
+        // Calculate realistic reading/typing delay based on string length
+        // Base delay 600ms + ~25ms per character (capped at 2800ms)
+        const calcDelay = Math.min(2800, 600 + (reply.length * 25));
+        
         setTimeout(() => {
             removeTypingIndicator();
-            const reply = getBotResponse(queryText);
             appendMessage('assistant', reply);
-        }, 800 + Math.random() * 600); // realistic variance
+        }, calcDelay);
     };
 
     // Submit input handler
