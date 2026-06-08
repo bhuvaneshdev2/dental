@@ -2387,9 +2387,10 @@ section {
 
 /* Reviews / Testimonials Section (Lavender mockup style) */
 .reviews-section {
-    background-color: var(--clr-bg-main); /* Match main page background */
+    background-color: var(--clr-bg-main);
     padding: var(--section-padding);
     overflow: hidden;
+    position: relative;
 }
 
 .reviews-header {
@@ -2609,7 +2610,10 @@ section {
     .reviews-grid {
         display: flex;
         overflow-x: auto;
+        overflow-y: hidden;
         scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-x: contain;
         gap: 20px;
         padding-bottom: 20px;
         scrollbar-width: none;
@@ -2621,7 +2625,7 @@ section {
 
     .review-card-item {
         flex: 0 0 85%;
-        scroll-snap-align: center;
+        scroll-snap-align: start;
         min-height: auto;
     }
 

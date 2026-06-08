@@ -388,16 +388,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Reviews Section Cards Stagger
     if (document.querySelector('.reviews-grid')) {
+        const isMobile = () => window.innerWidth <= 992;
         gsap.from('.review-card-item', {
             scrollTrigger: {
-                trigger: '.reviews-grid',
-                start: 'top 80%'
+                trigger: '.reviews-section',
+                start: 'top 90%'
             },
-            y: 40,
+            y: isMobile() ? 0 : 30,
             opacity: 0,
-            duration: 0.8,
-            stagger: 0.12,
-            ease: 'power2.out'
+            duration: 0.7,
+            stagger: 0.1,
+            ease: 'power2.out',
+            clearProps: 'transform,opacity'
         });
     }
 
