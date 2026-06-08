@@ -204,12 +204,12 @@ document.addEventListener('DOMContentLoaded', () => {
         gsap.from(title, {
             scrollTrigger: {
                 trigger: title,
-                start: 'top 85%',
+                start: 'top 95%',
                 toggleActions: 'play none none none'
             },
-            y: 35,
+            y: 25,
             opacity: 0,
-            duration: 0.85,
+            duration: 0.75,
             ease: 'power2.out'
         });
     });

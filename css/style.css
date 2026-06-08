@@ -628,6 +628,12 @@ section {
 }
 
 /* Services Section */
+.services {
+    position: relative;
+    z-index: 1;
+    isolation: isolate;
+}
+
 .services-wrapper {
     background-color: var(--clr-orange);
     border-radius: var(--border-radius-xl);
@@ -686,6 +692,11 @@ section {
 }
 
 /* Doctors Section */
+.doctors {
+    position: relative;
+    z-index: 2;
+}
+
 .doctors-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
