@@ -37,6 +37,8 @@
 
 html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
+    max-width: 100%;
 }
 
 body {
@@ -45,6 +47,8 @@ body {
     color: var(--clr-text-dark);
     line-height: 1.6;
     overflow-x: hidden;
+    max-width: 100%;
+    position: relative;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -2619,6 +2623,22 @@ section {
 
 /* Small Tablets / Large Phones (max-width: 768px) */
 @media (max-width: 768px) {
+    /* Prevent horizontal scroll */
+    *,
+    *::before,
+    *::after {
+        max-width: 100%;
+    }
+
+    main,
+    section,
+    .container,
+    .hero,
+    footer {
+        overflow-x: hidden;
+        width: 100%;
+    }
+
     /* Section Padding */
     section {
         padding: 60px 0;
