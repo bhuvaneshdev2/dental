@@ -198,6 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, '-=0.3');
 
     // 2. Scroll-Triggered Animations for Page Sections
+    const isMobileViewport = () => window.innerWidth <= 768;
 
     // Animate Section Titles
     document.querySelectorAll('section .section-title, section .booking-title').forEach(title => {
@@ -223,12 +224,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
         
-        aboutTl.from('.about-img-left', { x: -40, opacity: 0, duration: 1, ease: 'power2.out' });
+        aboutTl.from('.about-img-left', { x: isMobileViewport() ? 0 : -40, y: isMobileViewport() ? 20 : 0, opacity: 0, duration: 1, ease: 'power2.out', clearProps: 'transform' });
         aboutTl.from('.about-new-badge-wrapper', { scale: 0.8, opacity: 0, duration: 0.6 }, '-=0.8');
         aboutTl.from('.about-new-desc', { y: 20, opacity: 0, duration: 0.8 }, '-=0.6');
         aboutTl.from('.btn-book-about', { y: 15, opacity: 0, duration: 0.6 }, '-=0.6');
         aboutTl.from('.about-img-bottom', { scale: 0.9, opacity: 0, duration: 0.8, ease: 'power2.out' }, '-=0.4');
-        aboutTl.from('.about-img-right', { x: 40, opacity: 0, duration: 1, ease: 'power2.out' }, '-=1.2');
+        aboutTl.from('.about-img-right', { x: isMobileViewport() ? 0 : 40, y: isMobileViewport() ? 20 : 0, opacity: 0, duration: 1, ease: 'power2.out', clearProps: 'transform' }, '-=1.2');
         aboutTl.from('.about-new-stats', { y: 20, opacity: 0, duration: 0.8 }, '-=0.6');
     }
 
@@ -239,10 +240,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 trigger: '.phobia-comfort',
                 start: 'top 75%'
             },
-            x: -50,
+            x: isMobileViewport() ? 0 : -50,
+            y: isMobileViewport() ? 20 : 0,
             opacity: 0,
             duration: 1.2,
-            ease: 'power2.out'
+            ease: 'power2.out',
+            clearProps: 'transform'
         });
 
         gsap.from('.phobia-desc', {
@@ -260,11 +263,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 trigger: '.comfort-features',
                 start: 'top 80%'
             },
-            x: 40,
+            x: isMobileViewport() ? 0 : 40,
+            y: isMobileViewport() ? 20 : 0,
             opacity: 0,
             duration: 0.8,
             stagger: 0.15,
-            ease: 'power2.out'
+            ease: 'power2.out',
+            clearProps: 'transform'
         });
     }
 
@@ -275,10 +280,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 trigger: '.services',
                 start: 'top 70%'
             },
-            x: 50,
+            x: isMobileViewport() ? 0 : 50,
+            y: isMobileViewport() ? 20 : 0,
             opacity: 0,
             duration: 1.2,
-            ease: 'power2.out'
+            ease: 'power2.out',
+            clearProps: 'transform'
         });
 
         gsap.from('.accordion-item', {
@@ -331,10 +338,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 trigger: '.consultations',
                 start: 'top 75%'
             },
-            x: -40,
+            x: isMobileViewport() ? 0 : -40,
+            y: isMobileViewport() ? 20 : 0,
             opacity: 0,
             duration: 1.2,
-            ease: 'power2.out'
+            ease: 'power2.out',
+            clearProps: 'transform'
         });
         
         gsap.from('.consult-card', {
@@ -434,10 +443,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 trigger: '#appointment',
                 start: 'top 75%'
             },
-            x: -40,
+            x: isMobileViewport() ? 0 : -40,
+            y: isMobileViewport() ? 20 : 0,
             opacity: 0,
             duration: 1,
-            ease: 'power2.out'
+            ease: 'power2.out',
+            clearProps: 'transform'
         });
 
         gsap.from('.collage-img.img-2', {
@@ -445,11 +456,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 trigger: '#appointment',
                 start: 'top 70%'
             },
-            x: 40,
+            x: isMobileViewport() ? 0 : 40,
             y: -20,
             opacity: 0,
             duration: 1.2,
-            ease: 'power2.out'
+            ease: 'power2.out',
+            clearProps: 'transform'
         });
 
         gsap.from('.collage-badge', {
