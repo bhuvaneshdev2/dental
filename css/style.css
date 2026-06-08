@@ -3100,3 +3100,272 @@ section {
     }
 }
 
+/* ==========================================================================
+   MOBILE ALIGNMENT & CONSISTENT SPACING FIX
+   Applies to max-width: 768px (phones + small tablets)
+   ========================================================================== */
+@media (max-width: 768px) {
+
+    /* ── 1. Unified section vertical padding ─────────────────────────────── */
+    section,
+    .hero,
+    .about-new,
+    .phobia-comfort,
+    .services,
+    .doctors,
+    .gallery,
+    .consultations,
+    .insurance-finance,
+    .reviews-section,
+    .why-choose-us,
+    .faq,
+    .cta {
+        padding-top: 56px;
+        padding-bottom: 56px;
+    }
+
+    /* Hero still needs extra top to clear sticky navbar */
+    .hero {
+        padding-top: 120px;
+        padding-bottom: 56px;
+    }
+
+    /* ── 2. Uniform container side-padding ──────────────────────────────── */
+    .container {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    /* ── 3. All two-col grids → single column, uniform gap ──────────────── */
+    .about-new-grid,
+    .phobia-container,
+    .consultations-container,
+    .insurance-container,
+    .wcu-container,
+    .faq-container,
+    .services-wrapper {
+        grid-template-columns: 1fr !important;
+        gap: 32px !important;
+    }
+
+    /* ── 4. Even-section image/content order (image always on top) ───────── */
+    /* Phobia: image first */
+    .phobia-left  { order: 1; }
+    .phobia-right { order: 2; }
+    .phobia-img   { width: 100%; height: 260px; object-fit: cover; border-radius: 16px; }
+
+    /* Consultations: image first */
+    .consultations-left  { order: 1; }
+    .consultations-right { order: 2; }
+    .consult-main-img    { width: 100%; height: 240px; object-fit: cover; border-radius: 16px; }
+
+    /* Insurance: text first, card below */
+    .insurance-left  { order: 1; }
+    .insurance-right { order: 2; }
+
+    /* Why Choose Us: image first */
+    .wcu-left  { order: 1; }
+    .wcu-right { order: 2; }
+    .wcu-main-img { width: 100%; height: 240px; object-fit: cover; border-radius: 16px; }
+
+    /* FAQ: text first, accordion below */
+    .faq-left  { order: 1; }
+    .faq-right { order: 2; }
+
+    /* ── 5. Centre section labels and headings in stacked layouts ────────── */
+    .phobia-right,
+    .consultations-right,
+    .wcu-right,
+    .faq-left,
+    .insurance-left {
+        text-align: left; /* keep left-aligned for readability */
+    }
+
+    /* ── 6. Section header spacing inside cards/containers ──────────────── */
+    .section-label {
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    .section-title {
+        margin-bottom: 12px;
+        line-height: 1.2;
+    }
+
+    /* ── 7. About section ────────────────────────────────────────────────── */
+    .about-new-grid {
+        gap: 28px !important;
+    }
+
+    .about-new-center { order: 1; }
+    .about-new-left   { order: 2; }
+    .about-new-right  { order: 3; }
+
+    .about-new-left img,
+    .about-new-right img {
+        width: 100%;
+        max-width: 100%;
+        height: 220px;
+        object-fit: cover;
+        border-radius: 16px;
+    }
+
+    .about-new-bottom {
+        margin-top: 20px;
+    }
+
+    .about-new-stats {
+        margin-top: 16px;
+        text-align: left;
+    }
+
+    /* ── 8. Services section ─────────────────────────────────────────────── */
+    .services-left {
+        padding: 28px 20px;
+    }
+
+    .services-right {
+        height: 220px;
+    }
+
+    /* ── 9. Doctors grid ─────────────────────────────────────────────────── */
+    .doctors-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 16px;
+    }
+
+    /* ── 10. Gallery ─────────────────────────────────────────────────────── */
+    .gallery-tabs {
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin: 20px 0;
+    }
+
+    .gallery-tab {
+        padding: 8px 16px;
+        font-size: 0.82rem;
+    }
+
+    /* ── 11. Consultations card fix ──────────────────────────────────────── */
+    .consult-card {
+        position: relative;
+        bottom: auto;
+        left: auto;
+        margin: 16px 0 0;
+        max-width: 100%;
+    }
+
+    /* ── 12. Insurance membership card ──────────────────────────────────── */
+    .membership-plan-card {
+        padding: 24px 20px;
+    }
+
+    /* ── 13. Reviews section ─────────────────────────────────────────────── */
+    .reviews-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+
+    .reviews-grid {
+        gap: 16px;
+        padding-bottom: 8px;
+    }
+
+    .review-card-item {
+        flex: 0 0 88%;
+        padding: 24px 20px;
+    }
+
+    /* ── 14. Why Choose Us bottom row ────────────────────────────────────── */
+    .wcu-bottom-row {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 16px;
+        align-items: center;
+    }
+
+    /* ── 15. FAQ section ─────────────────────────────────────────────────── */
+    .faq-sidebar-text {
+        font-size: 0.95rem;
+        margin-bottom: 16px;
+    }
+
+    /* ── 16. CTA / Booking section ───────────────────────────────────────── */
+    .cta-container-new {
+        gap: 32px;
+    }
+
+    .booking-card-new {
+        padding: 28px 20px;
+    }
+
+    /* ── 17. Footer grid ─────────────────────────────────────────────────── */
+    .footer-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 28px;
+    }
+
+    .footer-bottom {
+        flex-direction: column;
+        gap: 24px;
+    }
+
+    .footer-bottom-title {
+        font-size: 2rem;
+        margin-bottom: 8px;
+    }
+}
+
+/* ── Extra small phones (max-width: 480px) ──────────────────────────────── */
+@media (max-width: 480px) {
+
+    section,
+    .about-new,
+    .phobia-comfort,
+    .services,
+    .doctors,
+    .gallery,
+    .consultations,
+    .insurance-finance,
+    .reviews-section,
+    .why-choose-us,
+    .faq,
+    .cta {
+        padding-top: 48px;
+        padding-bottom: 48px;
+    }
+
+    .hero {
+        padding-top: 110px;
+        padding-bottom: 48px;
+    }
+
+    /* Doctors → single column on very small screens */
+    .doctors-grid {
+        grid-template-columns: 1fr !important;
+        gap: 14px;
+    }
+
+    /* Footer → single column */
+    .footer-grid {
+        grid-template-columns: 1fr !important;
+        gap: 22px;
+    }
+
+    /* Review cards full width */
+    .review-card-item {
+        flex: 0 0 92%;
+        padding: 20px 16px;
+    }
+
+    .about-new-left img,
+    .about-new-right img,
+    .phobia-img,
+    .consult-main-img,
+    .wcu-main-img {
+        height: 200px;
+    }
+}
